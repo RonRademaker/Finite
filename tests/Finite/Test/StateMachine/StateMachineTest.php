@@ -166,4 +166,62 @@ class StateMachineTest extends StateMachineTestCase
 
         $this->assertSame(array('t12', 't23', 't34', 't45'), $this->object->getTransitions());
     }
+
+    /**
+     * Test events with a named statemachine
+     */
+    public function testApplyWithGraph()
+    {
+
+        $this->dispatcher
+            ->expects($this->at(1))
+            ->method('dispatch')
+            ->with('finite.test_transition', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(2))
+            ->method('dispatch')
+            ->with('finite.test_transition.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(3))
+            ->method('dispatch')
+            ->with('finite.test_transition.foo.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(4))
+            ->method('dispatch')
+            ->with('finite.pre_transition', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(5))
+            ->method('dispatch')
+            ->with('finite.pre_transition.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(6))
+            ->method('dispatch')
+            ->with('finite.pre_transition.foo.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(7))
+            ->method('dispatch')
+            ->with('finite.post_transition', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(8))
+            ->method('dispatch')
+            ->with('finite.post_transition.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->dispatcher
+            ->expects($this->at(9))
+            ->method('dispatch')
+            ->with('finite.post_transition.foo.t23', $this->isInstanceOf('Finite\Event\TransitionEvent'));
+
+        $this->object->setGraph('foo');
+
+        $this->initialize();
+        $this->object->apply('t23');
+        $this->assertSame('s3', $this->object->getCurrentState()->getName());
+    }
 }
