@@ -109,14 +109,20 @@ class StateMachine implements StateMachineInterface
         }
 
         $this->dispatcher->dispatch(FiniteEvents::PRE_TRANSITION, $event);
-        $this->dispatcher->dispatch(FiniteEvents::PRE_TRANSITION.'.'.$transitionName, $event);
+        $this->dispatcher->dispatch(FiniteEvents::PRE_TRANSITION . '.' . $transitionName, $event);
+        if (null !== $this->getGraph()) {
+            $this->dispatcher->dispatch(FiniteEvents::PRE_TRANSITION . '.' . $this->getGraph() . '.' . $transition->getName(), $event);
+        }
 
         $returnValue = $transition->process($this);
         $this->object->setFiniteState($transition->getState());
         $this->currentState = $this->getState($transition->getState());
 
         $this->dispatcher->dispatch(FiniteEvents::POST_TRANSITION, $event);
-        $this->dispatcher->dispatch(FiniteEvents::POST_TRANSITION.'.'.$transitionName, $event);
+        $this->dispatcher->dispatch(FiniteEvents::POST_TRANSITION . '.' . $transitionName, $event);
+        if (null !== $this->getGraph()) {
+            $this->dispatcher->dispatch(FiniteEvents::POST_TRANSITION . '.' . $this->getGraph() . '.' . $transition->getName(), $event);
+        }
 
         return $returnValue;
     }
@@ -138,7 +144,10 @@ class StateMachine implements StateMachineInterface
 
         $event = new TransitionEvent($this->getCurrentState(), $transition, $this);
         $this->dispatcher->dispatch(FiniteEvents::TEST_TRANSITION, $event);
-        $this->dispatcher->dispatch(FiniteEvents::TEST_TRANSITION.'.'.$transition->getName(), $event);
+        $this->dispatcher->dispatch(FiniteEvents::TEST_TRANSITION . '.' . $transition->getName(), $event);
+        if (null !== $this->getGraph()) {
+            $this->dispatcher->dispatch(FiniteEvents::TEST_TRANSITION . '.' . $this->getGraph() . '.' . $transition->getName(), $event);
+        }
 
         return !$event->isRejected();
     }
