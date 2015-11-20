@@ -55,6 +55,11 @@ class StateMachine implements StateMachineInterface
     protected $dispatcher;
 
     /**
+     * The graph for this statemachine
+     */
+    protected $graph;
+
+    /**
      * @param StatefulInterface        $object
      * @param EventDispatcherInterface $dispatcher
      */
@@ -287,5 +292,25 @@ class StateMachine implements StateMachineInterface
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * Sets the graph
+     *
+     * @param string $graph
+     */
+    public function setGraph($graph)
+    {
+        $this->graph = $graph;
+    }
+
+    /**
+     * Gets the graph
+     *
+     * @return string
+     */
+    public function getGraph()
+    {
+        return $this->graph;
     }
 }
