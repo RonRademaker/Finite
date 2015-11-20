@@ -106,7 +106,14 @@ class ArrayLoader implements LoaderInterface
 
         foreach ($this->config['transitions'] as $transition => $config) {
             $config = $resolver->resolve($config);
-            $stateMachine->addTransition(new Transition($transition, $config['from'], $config['to'], $config['guard']));
+            $stateMachine->addTransition(
+                new Transition(
+                    $transition,
+                    $config['from'],
+                    $config['to'],
+                    array_key_exists('guard', $config) ? $config['guard'] : null
+                )
+            );
         }
     }
 
